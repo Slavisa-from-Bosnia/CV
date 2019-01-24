@@ -31,11 +31,7 @@ int main()
 
 	// 3 channel image with BGR color (type 8UC3)
 	// the values can be stored in "int" or in "uchar". Here int is used.
-	Vec3b intensity2 = src1.at<Vec3b>(10, 15);
-	int blue = intensity2.val[0];
-	int green = intensity2.val[1];
-	int red = intensity2.val[2];
-	cout << "Intensity = " << endl << " " << blue << " " << green << " " << red << endl << endl;
+	
 
 	// ******************* WRITE to Pixel intensity **********************
 	// This is an example in OpenCV 2.4.6.0 documentation 
@@ -46,13 +42,18 @@ int main()
 	cout << H << endl << endl;
 
 	// Modify the pixels of the BGR image
-	for (int i = 100; i<src1.rows; i++)
+	for (int i = 100; i<src1.rows; i =i++)
 	{
-		for (int j = 100; j<src1.cols; j++)
+		for (int j = 100; j<src1.cols; j = j++)
 		{
 			src1.at<Vec3b>(i, j)[0] = 0;
 			src1.at<Vec3b>(i, j)[1] = 200;
 			src1.at<Vec3b>(i, j)[2] = 0;
+			Vec3b intensity2 = src1.at<Vec3b>(i, j);
+			int blue = intensity2.val[0];
+			int green = intensity2.val[1];
+			int red = intensity2.val[2];
+			cout << "Intensity = " << endl << " " << blue << " " << green << " " << red << endl << endl;
 		}
 	}
 	namedWindow("Modify pixel", CV_WINDOW_AUTOSIZE);
