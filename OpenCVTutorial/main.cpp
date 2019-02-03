@@ -1,64 +1,46 @@
-#include "opencv2/core/core.hpp"
+#include <iostream>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "iostream"
 
 using namespace cv;
 using namespace std;
 
-int main()
-{
+ int main( int argc, char** argv )
+ {
+    VideoCapture cap(0); //capture the video from web cam
 
-	Mat src1;
-	src1 = imread("s1.jpg", CV_LOAD_IMAGE_COLOR);
-	namedWindow("Original image", CV_WINDOW_AUTOSIZE);
-	imshow("Original image", src1);
+    if ( !cap.isOpened() )  // if not success, exit program
+    {
+         cout << "Cannot open the web cam" << endl;
+         return -1;
+    }
 
-	Mat gray;
-	cvtColor(src1, gray, CV_BGR2GRAY);
-	namedWindow("Gray image", CV_WINDOW_AUTOSIZE);
-	imshow("Gray image", gray);
+    namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
 
-	// know the number of channels the image has
-	cout << "original image channels: " << src1.channels() << "gray image channels: " << gray.channels() << endl;
 
-	// ******************* READ the Pixel intensity *********************
-	// single channel grey scale image (type 8UC1) and pixel coordinates x=5 and y=2
-	// by convention, {row number = y} and {column number = x}
-	// intensity.val[0] contains a value from 0 to 255
-	Scalar intensity1 = gray.at<uchar>(2, 5);
-	cout << "Intensity = " << endl << " " << intensity1.val[0] << endl << endl;
+    while (true)
+    {
+        Mat imgOriginal;
+		cap.grab();
 
-	// 3 channel image with BGR color (type 8UC3)
-	// the values can be stored in "int" or in "uchar". Here int is used.
-	
-
-	// ******************* WRITE to Pixel intensity **********************
-	// This is an example in OpenCV 2.4.6.0 documentation 
-	Mat H(10, 10, CV_64F);
-	for (int i = 0; i < H.rows; i++)
-		for (int j = 0; j < H.cols; j++)
-			H.at<double>(i, j) = 1. / (i + j + 1);
-	cout << H << endl << endl;
-
-	// Modify the pixels of the BGR image
-	for (int i = 100; i<src1.rows; i =i++)
-	{
-		for (int j = 100; j<src1.cols; j = j++)
-		{
-			src1.at<Vec3b>(i, j)[0] = 0;
-			src1.at<Vec3b>(i, j)[1] = 200;
-			src1.at<Vec3b>(i, j)[2] = 0;
-			Vec3b intensity2 = src1.at<Vec3b>(i, j);
-			int blue = intensity2.val[0];
-			int green = intensity2.val[1];
-			int red = intensity2.val[2];
-			cout << "Intensity = " << endl << " " << blue << " " << green << " " << red << endl << endl;
+		if (!cap.grab()) {
+			printf("failed to grab from camera\n");
+			break;
 		}
-	}
-	namedWindow("Modify pixel", CV_WINDOW_AUTOSIZE);
-	imshow("Modify pixel", src1);
+		cap >> imgOriginal;
 
-	waitKey(0);
-	return 0;
+
+
+  
+  imshow("Original", imgOriginal); //show the original image
+
+        if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+       {
+            cout << "esc key is pressed by user" << endl;
+            break; 
+       }
+    }
+
+   return 0;
+
 }
