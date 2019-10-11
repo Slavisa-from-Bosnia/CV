@@ -20,19 +20,19 @@ using namespace std;
 
     while (true)
     {
-        Mat imgOriginal;
+        Mat imgIinal;
 		cap.grab();
 
 		if (!cap.grab()) {
 			printf("failed to grab from camera\n");
 			break;
 		}
-		cap >> imgOriginal;
+		cap >> imgIinal;
 
 
 
   
-  imshow("Original", imgOriginal); //show the original image
+  imshow("Iinal", imgIinal); //show the Iinal image
 
 
 	  
@@ -50,36 +50,26 @@ using namespace std;
 }
 */
 
-#include "opencv2/opencv.hpp"
+/*#include "opencv2/opencv.hpp"
 using namespace cv;
-int main(int, char**)
-{
-VideoCapture cap(0); // open the default camera
-if(!cap.isOpened())  // check if we succeeded
-return -1;
-Mat original;
-namedWindow("original",1);
-namedWindow("step1", 1);
-namedWindow("step2", 1);
-namedWindow("originalz", 1);
-for(;;)
-{
-Mat frame;
-cap >> frame; // get a new frame from camera
-imshow("originalz", frame);
 
-//cvtColor(frame, original, COLOR_BGR2GRAY);
-//imshow("original", original);
-//GaussianBlur(original, original, Size(7,7), 1.5, 1.5);
-//imshow("step1", original);
-//Canny(original, original, 0, 30, 3);
-//imshow("step2", original);
-if(waitKey(30) >= 0) break;
+void filter1(Mat& I, Mat& S) {
+
+	int channels = I.channels();
+
+	int nRows = I.rows;
+	int nCols = I.cols * channels;
+
+	int i, j;
+	uchar* p;
+	uchar* s;
+
+	
+	
 }
-// the camera will be deinitialized automatically in VideoCapture destructor
-return 0;
-}
-Mat& ScanImageAndReduceC(Mat& I, const uchar* const table)
+
+*/
+/*Mat& ScanImageAndReduceC(Mat& I, const uchar* const table)
 {
 	// accept only char type matrices
 	CV_Assert(I.depth() == CV_8U);
@@ -106,4 +96,74 @@ Mat& ScanImageAndReduceC(Mat& I, const uchar* const table)
 		}
 	}
 	return I;
+}*/
+
+Mat& FindEdges (Mat& I)
+{
+	// accept only char type matrices
+	CV_Assert(I.depth() == CV_8U);
+
+	int channels = I.channels();
+
+	int nRows = I.rows;
+	int nCols = I.cols * channels;
+	int step = 1;
+	
+
+	/*if (I.isContinuous())
+	{
+		nCols *= nRows;
+		nRows = 1;
+	}
+	*/
+
+
+	int i, j;
+	int bref, gref, rref;
+
+	for (i = 0; i < nRows; i=i+step)
+	{
+	uchar* p = I.ptr<uchar>(i);
+		for (j = 0; j < nCols; j=j+step)
+		{
+			 uchar *p2 = p;
+
+			p2[0] = p2[0] + 10;
+			p2[1] = p2[1] + 10;
+			p2[2] = p2[2] + 10;
+			
+			p += 3*step;
+		}
+	}
+	return I;
 }
+
+int main(int, char**)
+{
+VideoCapture cap(0); // open the default camera
+if(!cap.isOpened())  // check if we succeeded
+return -1;
+Mat frame, step1;
+
+namedWindow("Iinal",1);
+namedWindow("AfterEdges", 1);
+
+for(;;)
+{
+	
+cap >> frame; // get a new frame from camera
+
+
+imshow("Iinal", frame);
+step1 = FindEdges (frame);
+
+imshow("AfterEdges", step1);
+
+
+
+if(waitKey(30) >= 0) break;
+}
+// the camera will be deinitialized automatically in VideoCapture destructor
+return 0;
+}
+
