@@ -5,98 +5,6 @@
 using namespace cv;
 using namespace std;
 
-/* int main( int argc, char** argv )
- {
-    VideoCapture cap(0); //capture the video from web cam
-
-    if ( !cap.isOpened() )  // if not success, exit program
-    {
-         cout << "Cannot open the web cam" << endl;
-         return -1;
-    }
-
-    namedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
-
-
-    while (true)
-    {
-        Mat imgIinal;
-		cap.grab();
-
-		if (!cap.grab()) {
-			printf("failed to grab from camera\n");
-			break;
-		}
-		cap >> imgIinal;
-
-
-
-  
-  imshow("Iinal", imgIinal); //show the Iinal image
-
-
-	  
-
-
-        if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
-       {
-            cout << "esc key is pressed by user" << endl;
-            break; 
-       }
-    }
-
-   return 0;
-
-}
-*/
-
-/*#include "opencv2/opencv.hpp"
-using namespace cv;
-
-void filter1(Mat& I, Mat& S) {
-
-	int channels = I.channels();
-
-	int nRows = I.rows;
-	int nCols = I.cols * channels;
-
-	int i, j;
-	uchar* p;
-	uchar* s;
-
-	
-	
-}
-
-*/
-/*Mat& ScanImageAndReduceC(Mat& I, const uchar* const table)
-{
-	// accept only char type matrices
-	CV_Assert(I.depth() == CV_8U);
-
-	int channels = I.channels();
-
-	int nRows = I.rows;
-	int nCols = I.cols * channels;
-
-	if (I.isContinuous())
-	{
-		nCols *= nRows;
-		nRows = 1;
-	}
-
-	int i, j;
-	uchar* p;
-	for (i = 0; i < nRows; ++i)
-	{
-		p = I.ptr<uchar>(i);
-		for (j = 0; j < nCols; ++j)
-		{
-			p[j] = table[p[j]];
-		}
-	}
-	return I;
-}*/
 
 Mat& FindEdges (Mat& I)
 {
@@ -107,7 +15,7 @@ Mat& FindEdges (Mat& I)
 
 	int nRows = I.rows;
 	int nCols = I.cols * channels;
-	int step = 1;
+	int step = 1*3;
 	
 
 	/*if (I.isContinuous())
@@ -119,22 +27,43 @@ Mat& FindEdges (Mat& I)
 
 
 	int i, j;
-	int bref, gref, rref;
+	uchar bref, gref, rref;
+	uchar diffcolor = 77;
+	bref = 1;
+	gref = 1;
+	rref = 1;
 
-	for (i = 0; i < nRows; i=i+step)
-	{
+	for (i = 0; i < nRows; i=i+1) {
+
 	uchar* p = I.ptr<uchar>(i);
-		for (j = 0; j < nCols; j=j+step)
-		{
+		for (j = 0; j < nCols; j=j+step) {
 			 uchar *p2 = p;
 
-			p2[0] = p2[0] + 10;
-			p2[1] = p2[1] + 10;
-			p2[2] = p2[2] + 10;
+			if ((((p2[0] - bref )> diffcolor)|| ((bref -p2[0])> diffcolor)) || (((p2[1] - gref)> diffcolor) || ((gref - p2[1])> diffcolor)) || (((p2[2] - rref)> diffcolor) || ((rref - p2[2])> diffcolor))) {
+				 //bref = p2[0];
+				p2[0] = 255;
+				p2[1] = 255;
+				p2[2] = 255;
+			 }
+			 else {
+				 p2[0] = 1;
+				 p2[1] = 1;
+				 p2[2] = 1;
+			 }
+			 
+			//gref = p2[1] + 10;
+			//rref = p2[2] + 10;
+
+			 
+			//p2[0] = bref;
+			//p2[1] = gref;
+			//p2[2] = rref;
+
 			
 			p += 3*step;
 		}
 	}
+	
 	return I;
 }
 
