@@ -2,9 +2,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+
 using namespace cv;
 using namespace std;
-
 
 Mat& FindEdges (Mat& I)
 {
@@ -13,9 +13,10 @@ Mat& FindEdges (Mat& I)
 
 	int channels = I.channels();
 
+
 	int nRows = I.rows;
 	int nCols = I.cols * channels;
-	int step = 1*3;
+	
 	
 
 	/*if (I.isContinuous())
@@ -27,66 +28,70 @@ Mat& FindEdges (Mat& I)
 
 
 	int i, j;
-	uchar bref, gref, rref;
-	uchar diffcolor = 77;
-	bref = 1;
-	gref = 1;
-	rref = 1;
+
+	uchar diffcolor = 8;
+	
 
 	for (i = 0; i < nRows; i=i+1) {
 
 	uchar* p = I.ptr<uchar>(i);
-		for (j = 0; j < nCols; j=j+step) {
-			 uchar *p2 = p;
 
-			if ((((p2[0] - bref )> diffcolor)|| ((bref -p2[0])> diffcolor)) || (((p2[1] - gref)> diffcolor) || ((gref - p2[1])> diffcolor)) || (((p2[2] - rref)> diffcolor) || ((rref - p2[2])> diffcolor))) {
-				 //bref = p2[0];
-				p2[0] = 255;
-				p2[1] = 255;
-				p2[2] = 255;
-			 }
-			 else {
-				 p2[0] = 1;
-				 p2[1] = 1;
-				 p2[2] = 1;
-			 }
-			 
-			//gref = p2[1] + 10;
-			//rref = p2[2] + 10;
+		for (j = 0; j < nCols-6; j=j+3) {
+			uchar *p2 = p;
 
-			 
-			//p2[0] = bref;
-			//p2[1] = gref;
-			//p2[2] = rref;
+			if (
+				((p2[3] - p2[0]) > diffcolor || (p2[0] - p2[3]) > diffcolor)||
+				((p2[4] - p2[1]) > diffcolor || (p2[1] - p2[4]) > diffcolor)||
+				((p2[5] - p2[2]) > diffcolor || (p2[2] - p2[5]) > diffcolor)) {
 
+					p2[0] = p2[3];
+					p2[1] = p2[4];
+					p2[2] = p2[5];	
+			}
+			else {
+				p2[0] = 1;
+				p2[1] = 1;
+				p2[2] = 1;
+			}
 			
-			p += 3*step;
+			p += 3;
 		}
 	}
 	
 	return I;
 }
 
+
 int main(int, char**)
 {
 VideoCapture cap(0); // open the default camera
 if(!cap.isOpened())  // check if we succeeded
 return -1;
-Mat frame, step1;
 
-namedWindow("Iinal",1);
-namedWindow("AfterEdges", 1);
+Mat fr1, fr2 ;
 
-for(;;)
-{
+namedWindow("Initial", 1);
+namedWindow("FindEdges", 1);
+//namedWindow("AfterEdges", 1);
+
+for(;;){
 	
-cap >> frame; // get a new frame from camera
+	cap >> fr1;
+
+		//  new frame from camera
+
+		//
+imshow("Initial", fr1);
 
 
-imshow("Iinal", frame);
-step1 = FindEdges (frame);
 
-imshow("AfterEdges", step1);
+
+//cvtColor(frame, step1, COLOR_BGR2HSV);
+fr2 = FindEdges (fr1);
+//imshow("HSV", step1)
+//imshow("AfterEdges", step2);
+imshow("FindEdges", fr2);
+
 
 
 
